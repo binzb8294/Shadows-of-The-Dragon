@@ -1,6 +1,3 @@
-# KidsCanCode - Game Development with Pygame video series
-# Tile-based game - Part 1
-# Project setup
 # Video link: https://youtu.be/3UxnelT9aCo
 import pygame as pg
 import sys
