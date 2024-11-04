@@ -1,9 +1,11 @@
 # Video link: https://youtu.be/3UxnelT9aCo
 import pygame as pg
 import sys
+import random
 from settings import *
 from sprites import *
 
+bg = pg.image.load("/Users/3047266/Downloads/Shadows of the Dragon/map.png")
 class Game:
     def __init__(self):
         pg.init()
@@ -21,6 +23,8 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.player = Player(self, 10, 10)
+        self.enemy = Enemy(self, 12, 12)
+        
         for x in range(10, 20):
             Wall(self, x, 5)
 
@@ -32,7 +36,7 @@ class Game:
             self.events()
             self.update()
             self.draw()
-
+        
     def quit(self):
         pg.quit()
         sys.exit()
@@ -59,16 +63,116 @@ class Game:
             if event.type == pg.QUIT:
                 self.quit()
             if event.type == pg.KEYDOWN:
+                distance = round((abs(self.player.x - self.enemy.x) + abs(self.player.y - self.enemy.y))/2)
+                if self.player.x == self.enemy.x or self.player.y == self.enemy.y:
+                    diagonal = False
+                else:
+                    diagonal = True
+                #MOVEMENT
+                if event.key == pg.K_LEFT:
+                    if not(self.enemy.x < self.player.x and distance == 0 and diagonal == False):
+                        self.player.move(dx=-1)
+                if event.key == pg.K_RIGHT:
+                    if not(self.enemy.x > self.player.x and distance == 0 and diagonal == False):
+                        self.player.move(dx=1)
+                if event.key == pg.K_UP:
+                    if not(self.enemy.y < self.player.y and distance == 0 and diagonal == False):
+                        self.player.move(dy=-1)
+                if event.key == pg.K_DOWN:
+                    if not(self.enemy.y > self.player.y and distance == 0 and diagonal == False):
+                        self.player.move(dy=1)
+                if event.key == pg.K_SPACE:
+                    if (distance == 1 and diagonal == True) or (distance == 0 and diagonal == False):
+                        print("Player attacked!")
+                    else:
+                        print("Player missed!")
+                
+                #enemy movement happens randomly, implement AI later
+                enemy_moved = False
+                distance = round((abs(self.player.x - self.enemy.x) + abs(self.player.y - self.enemy.y))/2)
+                if self.player.x == self.enemy.x or self.player.y == self.enemy.y:
+                    diagonal = False
+                else:
+                    diagonal = True
+                print(f"distance = {distance}")
+                print(f"diagonal = {diagonal}")
+                if (distance == 1 and diagonal == True) or (distance == 0 and diagonal == False):
+                    print("Enemy attacks")
+                    enemy_moved = True
+
+                #RANDOM AI, moves at random
+                '''
+                if enemy_moved == False:
+                    enemy_movement_direction = random.randint(1,4)
+                    if enemy_movement_direction == 1:
+                        if not (self.enemy.x == self.player.x+1):
+                            self.enemy.move(dx=-1)
+                    if enemy_movement_direction == 2:
+                        if not (self.enemy.x == self.player.x-1):
+                            self.enemy.move(dx=1)
+                    if enemy_movement_direction == 3:
+                        if not (self.enemy.y == self.player.y+1):
+                            self.enemy.move(dy=-1)
+                    if enemy_movement_direction == 4:
+                        if not (self.enemy.y == self.player.y-1):
+                            self.enemy.move(dy=1)
+                '''
+                #TARGET AI, moves towards the player
+                if enemy_moved == False:
+                    enemy_movement_direction = random.randint(1,2)
+
+                    #if player to the left
+                    if self.player.x < self.enemy.x:
+                        #if player above
+                        if self.player.y < self.enemy.y:
+                            if enemy_movement_direction == 1:
+                                self.enemy.move(dx=-1)
+                            else:
+                                self.enemy.move(dy=-1)
+                        #if player below
+                        elif self.player.y > self.enemy.y:
+                            if enemy_movement_direction == 1:
+                                self.enemy.move(dx=-1)
+                            else:
+                                self.enemy.move(dy=1)
+                        #if y values are equal
+                        else:
+                            self.enemy.move(dx=-1)
+                    #if player to the right
+                    elif self.player.x > self.enemy.x:
+                        #if player above
+                        if self.player.y < self.enemy.y:
+                            if enemy_movement_direction == 1:
+                                self.enemy.move(dx=1)
+                            else:
+                                self.enemy.move(dy=-1)
+                        #if player below
+                        elif self.player.y > self.enemy.y:
+                            if enemy_movement_direction == 1:
+                                self.enemy.move(dx=1)
+                            else:
+                                self.enemy.move(dy=1)
+                        #if y values are equal
+                        else:
+                            self.enemy.move(dx=1)
+                    #if x values are equal
+                    else:
+                        #if player above
+                        if self.player.y < self.enemy.y:
+                            self.enemy.move(dy=-1)
+                        #if player below
+                        elif self.player.y > self.enemy.y:
+                            self.enemy.move(dy=1)
+                        #if y values are equal
+                        else:
+                            print("error: enemy and player are on the same tile")
+                    
+                    
                 if event.key == pg.K_ESCAPE:
                     self.quit()
-                if event.key == pg.K_LEFT:
-                    self.player.move(dx=-1)
-                if event.key == pg.K_RIGHT:
-                    self.player.move(dx=1)
-                if event.key == pg.K_UP:
-                    self.player.move(dy=-1)
-                if event.key == pg.K_DOWN:
-                    self.player.move(dy=1)
+
+                #TURN ACTIONS
+                    ###
 
     def show_start_screen(self):
         pass
