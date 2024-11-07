@@ -105,31 +105,12 @@ class Game:
                     if enemy_moved == False:
                         self.enemy.move_random(self.enemy.x, self.enemy.y, self.player.x, self.player.y)
                         print("Enemy 1 moved")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
+                        
                 #TARGET AI, moves towards the player
                 if self.enemy2.AI == 1:
                     if enemy_moved == False:
                         self.enemy.move_target(self.enemy2.x, self.enemy2.y, self.player.x, self.player.y)
                         print("Enemy 2 moved")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
-                        print("time waster")
                     
                 if event.key == pg.K_ESCAPE:
                     self.quit()
