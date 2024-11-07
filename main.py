@@ -23,7 +23,8 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.player = Player(self, 10, 10)
-        self.enemy = Enemy(self, 12, 12)
+        self.enemy2 = Enemy(self, 12, 12, 1)
+        self.enemy = Enemy(self, 15, 15, 0)
         
         for x in range(10, 20):
             Wall(self, x, 5)
@@ -68,7 +69,7 @@ class Game:
                     diagonal = False
                 else:
                     diagonal = True
-                #MOVEMENT
+                #PLAYER MOVEMENT
                 if event.key == pg.K_LEFT:
                     if not(self.enemy.x < self.player.x and distance == 0 and diagonal == False):
                         self.player.move(dx=-1)
@@ -86,8 +87,7 @@ class Game:
                         print("Player attacked!")
                     else:
                         print("Player missed!")
-                
-                #enemy movement happens randomly, implement AI later
+                #Attacks?
                 enemy_moved = False
                 distance = round((abs(self.player.x - self.enemy.x) + abs(self.player.y - self.enemy.y))/2)
                 if self.player.x == self.enemy.x or self.player.y == self.enemy.y:
@@ -101,72 +101,35 @@ class Game:
                     enemy_moved = True
 
                 #RANDOM AI, moves at random
-                '''
-                if enemy_moved == False:
-                    enemy_movement_direction = random.randint(1,4)
-                    if enemy_movement_direction == 1:
-                        if not (self.enemy.x == self.player.x+1):
-                            self.enemy.move(dx=-1)
-                    if enemy_movement_direction == 2:
-                        if not (self.enemy.x == self.player.x-1):
-                            self.enemy.move(dx=1)
-                    if enemy_movement_direction == 3:
-                        if not (self.enemy.y == self.player.y+1):
-                            self.enemy.move(dy=-1)
-                    if enemy_movement_direction == 4:
-                        if not (self.enemy.y == self.player.y-1):
-                            self.enemy.move(dy=1)
-                '''
+                if self.enemy.AI == 0:
+                    if enemy_moved == False:
+                        self.enemy.move_random(self.enemy.x, self.enemy.y, self.player.x, self.player.y)
+                        print("Enemy 1 moved")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
                 #TARGET AI, moves towards the player
-                if enemy_moved == False:
-                    enemy_movement_direction = random.randint(1,2)
-
-                    #if player to the left
-                    if self.player.x < self.enemy.x:
-                        #if player above
-                        if self.player.y < self.enemy.y:
-                            if enemy_movement_direction == 1:
-                                self.enemy.move(dx=-1)
-                            else:
-                                self.enemy.move(dy=-1)
-                        #if player below
-                        elif self.player.y > self.enemy.y:
-                            if enemy_movement_direction == 1:
-                                self.enemy.move(dx=-1)
-                            else:
-                                self.enemy.move(dy=1)
-                        #if y values are equal
-                        else:
-                            self.enemy.move(dx=-1)
-                    #if player to the right
-                    elif self.player.x > self.enemy.x:
-                        #if player above
-                        if self.player.y < self.enemy.y:
-                            if enemy_movement_direction == 1:
-                                self.enemy.move(dx=1)
-                            else:
-                                self.enemy.move(dy=-1)
-                        #if player below
-                        elif self.player.y > self.enemy.y:
-                            if enemy_movement_direction == 1:
-                                self.enemy.move(dx=1)
-                            else:
-                                self.enemy.move(dy=1)
-                        #if y values are equal
-                        else:
-                            self.enemy.move(dx=1)
-                    #if x values are equal
-                    else:
-                        #if player above
-                        if self.player.y < self.enemy.y:
-                            self.enemy.move(dy=-1)
-                        #if player below
-                        elif self.player.y > self.enemy.y:
-                            self.enemy.move(dy=1)
-                        #if y values are equal
-                        else:
-                            print("error: enemy and player are on the same tile")
-                    
+                if self.enemy2.AI == 1:
+                    if enemy_moved == False:
+                        self.enemy.move_target(self.enemy2.x, self.enemy2.y, self.player.x, self.player.y)
+                        print("Enemy 2 moved")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
+                        print("time waster")
                     
                 if event.key == pg.K_ESCAPE:
                     self.quit()
