@@ -45,6 +45,7 @@ class Enemy(pg.sprite.Sprite):
             self.x += dx
             self.y += dy
             
+    #ex = enemy.x, ey = enemy.y, px = player.x, py = player.y
     def move_random(self, ex, ey, px, py):
         enemy_movement_direction = random.randint(1,4)
         if enemy_movement_direction == 1:
@@ -59,6 +60,7 @@ class Enemy(pg.sprite.Sprite):
         if enemy_movement_direction == 4:
             if not (ey == py-1):
                 self.move(dy=1)
+                
     def move_target(self, ex, ey, px, py):
         enemy_movement_direction = random.randint(1,2)
 

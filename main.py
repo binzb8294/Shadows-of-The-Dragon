@@ -23,8 +23,7 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.player = Player(self, 10, 10)
-        self.enemy2 = Enemy(self, 12, 12, 1)
-        self.enemy = Enemy(self, 15, 15, 0)
+        self.enemy = Enemy(self, 15, 15, 1)
         
         for x in range(10, 20):
             Wall(self, x, 5)
@@ -104,13 +103,13 @@ class Game:
                 if self.enemy.AI == 0:
                     if enemy_moved == False:
                         self.enemy.move_random(self.enemy.x, self.enemy.y, self.player.x, self.player.y)
-                        print("Enemy 1 moved")
+                        print("Enemy moved")
                         
                 #TARGET AI, moves towards the player
-                if self.enemy2.AI == 1:
+                if self.enemy.AI == 1:
                     if enemy_moved == False:
-                        self.enemy.move_target(self.enemy2.x, self.enemy2.y, self.player.x, self.player.y)
-                        print("Enemy 2 moved")
+                        self.enemy.move_target(self.enemy.x, self.enemy.y, self.player.x, self.player.y)
+                        print("Enemy moved")
                     
                 if event.key == pg.K_ESCAPE:
                     self.quit()
