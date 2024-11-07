@@ -14,14 +14,15 @@ class Game:
         pg.key.set_repeat(500, 100)
         self.load_data()
         self.Floor1R1= [['TLC','TW','TW','TW','TW','TW','TW','TRC'],
+                        ['TLUW','UW','UW','UW','UW','UW','UW','TRUW'
                     ['LW','P','T','T','T','T','T','LW'],
                     ['LW','T','T','T','T','T','T','LW'],
-                    ['LW','T','T','T','T','T','T','LW'],
+                    ['T','T','T','T','T','T','T','T'],
                     ['LW','T','T','T','T','T','T','LW'],
                     ['BLC','BW','BW','BW','BW','BW','BW','BRC']]
         
 
-
+        
     def load_data(self):
         game_folder = path.dirname(__file__)
         self.map_data =[]

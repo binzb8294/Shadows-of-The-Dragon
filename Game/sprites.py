@@ -4,7 +4,7 @@ from pygame.locals import *
 
 class Player(pg.sprite.Sprite):
     def __init__(self, game, x, y):
-        self.file = 'Knight.png'
+        self.file = 'Assets/Knight.png'
         self.image = pg.image.load(self.file)
         self.groups = game.all_sprites
         self.rect = self.image.get_rect()
@@ -45,7 +45,7 @@ class Player(pg.sprite.Sprite):
        
 class floorTile(pg.sprite.Sprite):
     def __init__(self,game,x,y):
-        self.file = 'floorTileGame.png'
+        self.file = 'Assets/floorTileGame.png'
         self.image = pg.image.load(self.file)
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
