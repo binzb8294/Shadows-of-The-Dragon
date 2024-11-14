@@ -13,20 +13,12 @@ class Game:
         self.clock = pg.time.Clock()
         pg.key.set_repeat(500, 100)
         self.load_data()
-        self.Floor1R1= [['TLC','TW','TW','TW','TW','TW','TW','TRC'],
-                        ['TLUW','UW','UW','UW','UW','UW','UW','TRUW'
-                    ['LW','P','T','T','T','T','T','LW'],
-                    ['LW','T','T','T','T','T','T','LW'],
-                    ['T','T','T','T','T','T','T','T'],
-                    ['LW','T','T','T','T','T','T','LW'],
-                    ['BLC','BW','BW','BW','BW','BW','BW','BRC']]
-        
 
         
     def load_data(self):
         game_folder = path.dirname(__file__)
         self.map_data =[]
-        with open(path.join(game_folder, 'map.txt'), 'rt') as f:
+        with open(path.join(game_folder, 'Maps/map.txt'), 'rt') as f:
             for line in f:
                 self.map_data.append(line)
 
@@ -39,12 +31,11 @@ class Game:
             for col, tile in enumerate(tiles):
                 if tile == ".":
                     floorTile(self,col,row)
-                if tile == '1':
-                    print(row)
-                    Wall(self, col, row)
-                if tile == 'P':
+                elif tile == 'P':
                     floorTile(self,col,row)
-         
+                else:
+                    Wall(self,col,row,tile)
+           
         for row, tiles in enumerate(self.map_data):
             for col, tile in enumerate(tiles):
                 if tile == 'P':
