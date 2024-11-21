@@ -21,10 +21,8 @@ class Player(pg.sprite.Sprite):
         if not self.collide_with_walls(dx, dy):
             self.x += dx
             self.y += dy
-            if(dx!=0)and(dy==0):
-            {
-                self.image = image.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
-            }
+          
+            
 
     def collide_with_walls(self, dx=0, dy=0):
         for wall in self.game.walls:
@@ -73,7 +71,7 @@ class Wall(pg.sprite.Sprite):
         if wallType == '3':
             self.image = pg.image.load('Assets/Top Left Corner.png')
         if wallType == '4':
-            self.image = pg.image.load('Assets/Top Right Upper Wall.png')
+            self.image = pg.image.load('Assets/Top Right Corner.png')
         if wallType == '5':
             self.image = pg.image.load('Assets/Top Left Upper Wall.png')
         if wallType == '6':
@@ -82,7 +80,11 @@ class Wall(pg.sprite.Sprite):
             self.image = pg.image.load('Assets/Left Wall.png')
         if wallType == '8':
             self.image = pg.image.load('Assets/Right Wall.png')
-        if wallType == 'm':
+        if wallType == '9':
+            self.image = pg.image.load('Assets/Bottom Left Corner.png')
+        if wallType == '0':
+            self.image = pg.image.load('Assets/Bottom Right Corner.png')
+        if wallType == 'M':
             self.image = pg.image.load('Assets/Bottom Wall.png')
         self.rect = self.image.get_rect()
         self.x = x

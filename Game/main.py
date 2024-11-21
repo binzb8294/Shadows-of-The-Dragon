@@ -8,7 +8,7 @@ from sprites import *
 class Game:
     def __init__(self):
         pg.init()
-        self.screen = pg.display.set_mode((192, 96))
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         pg.key.set_repeat(500, 100)
@@ -26,20 +26,8 @@ class Game:
         # initialize all variables and do all the setup for a new game
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
-        
-        for row, tiles in enumerate(self.map_data):
-            for col, tile in enumerate(tiles):
-                if tile == ".":
-                    floorTile(self,col,row)
-                elif tile == 'P':
-                    floorTile(self,col,row)
-                else:
-                    Wall(self,col,row,tile)
-           
-        for row, tiles in enumerate(self.map_data):
-            for col, tile in enumerate(tiles):
-                if tile == 'P':
-                    self.player = Player(self,col,row)
+        self.createMap()
+       
 
 
       # game loop - set self.playing = False to end the game
@@ -49,7 +37,23 @@ class Game:
             self.events()
             self.update()
             self.draw()
-
+            
+    def createMap(self):
+         XAdjust = (WIDTH/TILESIZE/2)-(len(self.map_data[0])/2)
+         YAdjust = (HEIGHT/TILESIZE/2)-(len(self.map_data)/2)
+         for row, tiles in enumerate(self.map_data):
+             for col, tile in enumerate(tiles):
+                 if tile == ".":
+                     floorTile(self,col+YAdjust,row+XAdjust)
+                 elif tile == 'P':
+                     floorTile(self,col+YAdjust,row+XAdjust)
+                 else:
+                     Wall(self,col+YAdjust,row+XAdjust,tile)
+           
+         for row, tiles in enumerate(self.map_data):
+             for col, tile in enumerate(tiles):
+                 if tile == 'P':
+                     self.player = Player(self,col+XAdjust,row+YAdjust)
     def quit(self):
         pg.quit()
         sys.exit()
@@ -58,15 +62,11 @@ class Game:
         # update portion of the game loop
         self.all_sprites.update()
 
-    def draw_grid(self):
-        for x in range(0, WIDTH, TILESIZE):
-            pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
-        for y in range(0, HEIGHT, TILESIZE):
-            pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
+    
 
     def draw(self):
         self.screen.fill(BGCOLOR)
-        self.draw_grid()
+    
         self.all_sprites.draw(self.screen)
         pg.display.flip()
 
