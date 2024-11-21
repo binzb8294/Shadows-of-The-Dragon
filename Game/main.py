@@ -39,6 +39,7 @@ class Game:
             self.draw()
             
     def createMap(self):
+         self.load_data()
          XAdjust = (WIDTH/TILESIZE/2)-(len(self.map_data[0])/2)
          YAdjust = (HEIGHT/TILESIZE/2)-(len(self.map_data)/2)
          for row, tiles in enumerate(self.map_data):
@@ -47,13 +48,18 @@ class Game:
                      floorTile(self,col+YAdjust,row+XAdjust)
                  elif tile == 'P':
                      floorTile(self,col+YAdjust,row+XAdjust)
+                 elif tile == 'M':
+                     Wall(self,col+YAdjust,row+XAdjust,tile)
+                 elif tile == '\n':
+                     pass
                  else:
                      Wall(self,col+YAdjust,row+XAdjust,tile)
-           
+
+
          for row, tiles in enumerate(self.map_data):
              for col, tile in enumerate(tiles):
                  if tile == 'P':
-                     self.player = Player(self,col+XAdjust,row+YAdjust)
+                     self.player = Player(self,col+YAdjust,row+XAdjust)
     def quit(self):
         pg.quit()
         sys.exit()
