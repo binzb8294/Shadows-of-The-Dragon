@@ -23,11 +23,12 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.player = Player(self, 10, 10)
-        self.enemy = Enemy(self, 15, 15, 1)
+        self.enemy = Enemy(self, 15, 15, 1, "enemy 1", False)
+        self.enemy2 = Enemy(self, 18, 18, 0, "enemy 2", False)
         
         for x in range(10, 20):
             Wall(self, x, 5)
-
+            
     def run(self):
         # game loop - set self.playing = False to end the game
         self.playing = True
@@ -36,7 +37,7 @@ class Game:
             self.events()
             self.update()
             self.draw()
-        
+    
     def quit(self):
         pg.quit()
         sys.exit()
@@ -64,52 +65,75 @@ class Game:
                 self.quit()
             if event.type == pg.KEYDOWN:
                 distance = round((abs(self.player.x - self.enemy.x) + abs(self.player.y - self.enemy.y))/2)
+                distance2 = round((abs(self.player.x - self.enemy2.x) + abs(self.player.y - self.enemy2.y))/2)
                 if self.player.x == self.enemy.x or self.player.y == self.enemy.y:
                     diagonal = False
                 else:
                     diagonal = True
+                if self.player.x == self.enemy2.x or self.player.y == self.enemy2.y:
+                    diagonal2 = False
+                else:
+                    diagonal2 = True
                 #PLAYER MOVEMENT
                 if event.key == pg.K_LEFT:
-                    if not(self.enemy.x < self.player.x and distance == 0 and diagonal == False):
+                    if (not(self.enemy.x < self.player.x and distance == 0 and diagonal == False)) and (not(self.enemy2.x < self.player.x and distance2 == 0 and diagonal2 == False)):
                         self.player.move(dx=-1)
                 if event.key == pg.K_RIGHT:
-                    if not(self.enemy.x > self.player.x and distance == 0 and diagonal == False):
+                    if (not(self.enemy.x > self.player.x and distance == 0 and diagonal == False)) and (not(self.enemy2.x > self.player.x and distance2 == 0 and diagonal2 == False)):
                         self.player.move(dx=1)
                 if event.key == pg.K_UP:
-                    if not(self.enemy.y < self.player.y and distance == 0 and diagonal == False):
+                    if (not(self.enemy.y < self.player.y and distance == 0 and diagonal == False)) and (not(self.enemy2.y < self.player.y and distance2 == 0 and diagonal2 == False)):
                         self.player.move(dy=-1)
                 if event.key == pg.K_DOWN:
-                    if not(self.enemy.y > self.player.y and distance == 0 and diagonal == False):
+                    if (not(self.enemy.y > self.player.y and distance == 0 and diagonal == False)) and (not(self.enemy2.y > self.player.y and distance2 == 0 and diagonal2 == False)):
                         self.player.move(dy=1)
+
+                miss_count = 0 #number of enemies
                 if event.key == pg.K_SPACE:
                     if (distance == 1 and diagonal == True) or (distance == 0 and diagonal == False):
-                        print("Player attacked!")
+                        self.enemy.damage(False)
                     else:
-                        print("Player missed!")
-                #Attacks?
-                enemy_moved = False
+                        miss_count += 1
+                    if (distance2 == 1 and diagonal2 == True) or (distance2 == 0 and diagonal2 == False):
+                        self.enemy2.damage(False)
+                    else:
+                        miss_count += 1
+                    if miss_count == 2:
+                        system.out.print("no enemy nearby")
+                print(f"enemy 1 distance away: {distance}\nenemy 2 distance away: {distance2}")
+                        
+                #Enemy attacks
+                self.enemy.moved = False
+                self.enemy2.moved = False
+                
                 distance = round((abs(self.player.x - self.enemy.x) + abs(self.player.y - self.enemy.y))/2)
+                distance2 = round((abs(self.player.x - self.enemy2.x) + abs(self.player.y - self.enemy2.y))/2)
                 if self.player.x == self.enemy.x or self.player.y == self.enemy.y:
                     diagonal = False
                 else:
                     diagonal = True
-                print(f"distance = {distance}")
-                print(f"diagonal = {diagonal}")
-                if (distance == 1 and diagonal == True) or (distance == 0 and diagonal == False):
-                    print("Enemy attacks")
-                    enemy_moved = True
+                if self.player.x == self.enemy2.x or self.player.y == self.enemy2.y:
+                    diagonal2 = False
+                else:
+                    diagonal2 = True
 
-                #RANDOM AI, moves at random
-                if self.enemy.AI == 0:
-                    if enemy_moved == False:
+                if self.enemy.dead == False: 
+                    self.player.damage(self.enemy.attack(distance, diagonal))
+                if self.enemy2.dead == False: 
+                    self.player.damage(self.enemy2.attack(distance2, diagonal2))
+                
+                #Enemy moves
+                if self.enemy.dead == False:
+                    if self.enemy.AI == 0:
                         self.enemy.move_random(self.enemy.x, self.enemy.y, self.player.x, self.player.y)
-                        print("Enemy moved")
-                        
-                #TARGET AI, moves towards the player
-                if self.enemy.AI == 1:
-                    if enemy_moved == False:
+                    if self.enemy.AI == 1:
                         self.enemy.move_target(self.enemy.x, self.enemy.y, self.player.x, self.player.y)
-                        print("Enemy moved")
+                if self.enemy2.dead == False:
+                    if self.enemy2.AI == 0:
+                        self.enemy2.move_random(self.enemy2.x, self.enemy2.y, self.player.x, self.player.y)
+                    if self.enemy2.AI == 1:
+                        self.enemy2.move_target(self.enemy2.x, self.enemy2.y, self.player.x, self.player.y)
+
                     
                 if event.key == pg.K_ESCAPE:
                     self.quit()
