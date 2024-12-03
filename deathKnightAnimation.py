@@ -4,9 +4,9 @@ from settings import *
 from sprites import *
 # Load death animation frames (replace with your image paths)
 death_frames = [
-    pygame.image.load("death_frame1.png"),
-    pygame.image.load("death_frame2.png"),
-    pygame.image.load("death_frame3.png"),
+    pygame.image.load("Knight.png"),
+    pygame.image.load("knightDeath1.png"),
+    pygame.image.load("deathSkull.png"),
     # ... add more frames as needed
 ]
 
