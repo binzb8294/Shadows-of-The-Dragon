@@ -76,7 +76,8 @@ class Game:
                  elif tile == 'P':
                      Hole(self,col+XAdjust,row+YAdjust,-1)
                  elif tile == 'E':
-                     floorTile(self,col+XAdjust,row+YAdjust)
+                     self.enemyList.append(Enemy(self,col+XAdjust,row+YAdjust,random.randint(0,1),"Enemy "+str(enemyNumber), False))
+                     enemyNumber+=1
                  elif tile == 'H':
                      Hole(self,col+XAdjust,row+YAdjust,1)
                  elif tile == 'M':
@@ -92,10 +93,7 @@ class Game:
                  if tile == 'P':
                       self.player=Player(self,col+XAdjust,row+YAdjust-1,self.player.level,self.player.exp,self.player.health)
                       self.killClones(self.player)
-                 elif tile == 'E':
-                      self.enemyList.append(Enemy(self,col+XAdjust,row+YAdjust,random.randint(0,1),"Enemy "+str(enemyNumber), False))
-                      enemyNumber+=1
-                      self.numEnemies+=1
+                     
     def quit(self):
         pg.quit()
         sys.exit()
