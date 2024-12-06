@@ -1,6 +1,7 @@
 # Video link: https://youtu.be/3UxnelT9aCo
 import pygame as pg
 import sys
+import random
 from os import path
 from settings import *
 from sprites import *
@@ -11,7 +12,7 @@ class Game:
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
-        pg.key.set_repeat(500, 100)
+        pg.key.set_repeat(300,300)
         self.load_data()
 
     
@@ -43,9 +44,12 @@ class Game:
         self.holes = pg.sprite.Group()
         self.players = pg.sprite.Group()
         self.player = Player(self,-1,-1)
+        self.enemyList = [];
         self.numEnemies = 0
         self.createMap()
-       
+        #self.enemy = Enemy(self, 15, 15, 1, "enemy 1", False)
+        #self.enemy2 = Enemy(self, 18, 18, 0, "enemy 2", False)
+        
 
 
       # game loop - set self.playing = False to end the game
@@ -61,7 +65,7 @@ class Game:
         print(self.currentMap)
     def createMap(self):
          print('born')
-         
+         enemyNumber=1
          self.resetMap()
          XAdjust = (WIDTH/TILESIZE/2)-(len(self.map_list[0][self.currentMap])/2)
          YAdjust = (HEIGHT/TILESIZE/2)-(len(self.map_list[self.currentMap])/2)
@@ -88,7 +92,10 @@ class Game:
                  if tile == 'P':
                       self.player=Player(self,col+XAdjust,row+YAdjust-1,self.player.level,self.player.exp,self.player.health)
                       self.killClones(self.player)
-                     
+                 elif tile == 'E':
+                      self.enemyList.append(Enemy(self,col+XAdjust,row+YAdjust,random.randint(0,1),"Enemy "+str(enemyNumber), False))
+                      enemyNumber+=1
+                      self.numEnemies+=1
     def quit(self):
         pg.quit()
         sys.exit()
@@ -109,23 +116,107 @@ class Game:
         self.all_sprites.draw(self.screen)
         
         pg.display.flip()
-    
     def events(self):
         # catch all events here
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.quit()
             if event.type == pg.KEYDOWN:
+                for enemy in self.enemyList:
+                    enemy.setDistance()
+                for enemy in self.enemyList:
+                    enemy.setDiagonal()
+                #PLAYER MOVEMENT
+                if event.key == pg.K_LEFT:
+                    enemyInTheWay = False
+                    for enemy in self.enemyList:
+                        if (enemy.x < self.player.x and enemy.distance == 0 and enemy.diagonal == False):
+                            enemyInTheWay = True
+                    if enemyInTheWay == False:
+                        self.player.move(dx=-1)
+                if event.key == pg.K_RIGHT:
+                    enemyInTheWay = False
+                    for enemy in self.enemyList:
+                        if (enemy.x > self.player.x and enemy.distance == 0 and enemy.diagonal == False):
+                            enemyInTheWay = True
+                    if enemyInTheWay == False:
+                        self.player.move(dx=1)
+                    
+                if event.key == pg.K_UP:
+                    enemyInTheWay = False
+                    for enemy in self.enemyList:
+                        if (enemy.y < self.player.y and enemy.distance == 0 and enemy.diagonal == False):
+                            enemyInTheWay = True
+                    if enemyInTheWay == False:
+                        self.player.move(dy=-1)
+                  
+                if event.key == pg.K_DOWN:
+                    enemyInTheWay = False
+                    for enemy in self.enemyList:
+                        if (enemy.y > self.player.y and enemy.distance == 0 and enemy.diagonal == False):
+                            enemyInTheWay = True
+                    if enemyInTheWay == False:
+                        self.player.move(dy=1)
+                    
+
+       
+                if event.key == pg.K_SPACE:
+                    for enemy in self.enemyList:
+                        if(enemy.distance == 1 and enemy.diagonal == True) or (enemy.distance == 0 and enemy.diagonal == False):
+                            enemy.damage(False)
+                 
+                    '''
+                    if (distance == 1 and diagonal == True) or (distance == 0 and diagonal == False):
+                        self.enemy.damage(False)
+                    else:
+                        miss_count += 1
+                    if (distance2 == 1 and diagonal2 == True) or (distance2 == 0 and diagonal2 == False):
+                        self.enemy2.damage(False)
+                    else:
+                        miss_count += 1
+                    if miss_count == 2:
+                        system.out.print("no enemy nearby")
+                print(f"enemy 1 distance away: {distance}\nenemy 2 distance away: {distance2}")
+                '''
+                #Enemy attacks
+                #self.enemy.moved = False
+                #self.enemy2.moved = False
+                for enemy in self.enemyList:
+                    enemy.moved=False
+          
+                for enemy in self.enemyList:
+                    enemy.setDistance()
+                for enemy in self.enemyList:
+                    enemy.setDiagonal()
+                for enemy in self.enemyList:
+                    self.player.damage(enemy.attack(enemy.distance,enemy.diagonal))
+                '''
+                if self.enemy.dead == False: 
+                    self.player.damage(self.enemy.attack(distance, diagonal))
+                if self.enemy2.dead == False: 
+                    self.player.damage(self.enemy2.attack(distance2, diagonal2))
+                '''
+                #Enemy move
+                for enemy in self.enemyList:
+                    if enemy.dead == False:
+                        if enemy.AI == 0:
+                            enemy.move_random(enemy.x, enemy.y, self.player.x, self.player.y)
+                        if enemy.AI == 1:
+                            enemy.move_target(enemy.x, enemy.y, self.player.x, self.player.y)
+                '''
+                if self.enemy.dead == False:
+                    if self.enemy.AI == 0:
+                        self.enemy.move_random(self.enemy.x, self.enemy.y, self.player.x, self.player.y)
+                    if self.enemy.AI == 1:
+                        self.enemy.move_target(self.enemy.x, self.enemy.y, self.player.x, self.player.y)
+                '''
+
+                    
                 if event.key == pg.K_ESCAPE:
                     self.quit()
-                if event.key == pg.K_LEFT:
-                    self.player.move(dx=-1)
-                if event.key == pg.K_RIGHT:
-                    self.player.move(dx=1)
-                if event.key == pg.K_UP:
-                    self.player.move(dy=-1)
-                if event.key == pg.K_DOWN:
-                    self.player.move(dy=1)
+
+                #TURN ACTIONS
+                    ###
                 
     def show_start_screen(self):
         pass
@@ -141,3 +232,10 @@ while True:
     g.run()
     g.show_go_screen()
 
+
+'''
+future bug fixes:
+    - enemies disappear randomly
+    - enemies move and attack after death
+    - enemies and players will overlap
+'''
