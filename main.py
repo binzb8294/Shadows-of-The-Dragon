@@ -65,7 +65,6 @@ class Game:
         print(self.currentMap)
     def createMap(self):
          print('born')
-         enemyNumber=1
          self.resetMap()
          XAdjust = (WIDTH/TILESIZE/2)-(len(self.map_list[0][self.currentMap])/2)
          YAdjust = (HEIGHT/TILESIZE/2)-(len(self.map_list[self.currentMap])/2)
@@ -76,8 +75,7 @@ class Game:
                  elif tile == 'P':
                      Hole(self,col+XAdjust,row+YAdjust,-1)
                  elif tile == 'E':
-                     self.enemyList.append(Enemy(self,col+XAdjust,row+YAdjust,random.randint(0,1),"Enemy "+str(enemyNumber), False))
-                     enemyNumber+=1
+                      floorTile(self,col+XAdjust,row+YAdjust)
                  elif tile == 'H':
                      Hole(self,col+XAdjust,row+YAdjust,1)
                  elif tile == 'M':
@@ -93,7 +91,9 @@ class Game:
                  if tile == 'P':
                       self.player=Player(self,col+XAdjust,row+YAdjust-1,self.player.level,self.player.exp,self.player.health)
                       self.killClones(self.player)
-                     
+                 elif tile == 'E':
+                     self.numEnemies+=1
+                     self.enemyList.append(Enemy(self,col+XAdjust,row+YAdjust,random.randint(0,1),"Enemy "+str(self.numEnemies), False))
     def quit(self):
         pg.quit()
         sys.exit()
