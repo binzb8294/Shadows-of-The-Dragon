@@ -4,7 +4,7 @@ from settings import *
 from pygame.locals import *
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, game, x, y, level=1, exp=0, health=10):
+    def __init__(self, game, x, y, level=1, exp=0, health=10, attack=1):
         self.file = 'Assets/Knight.png'
         self.image = pg.image.load(self.file)
         self.groups = game.all_sprites
@@ -19,14 +19,14 @@ class Player(pg.sprite.Sprite):
         self.health=health
         self.x = x
         self.y = y
-      
+        self.attack=attack
     def damage(self, h):
         if h != 0:
             self.health -= h
             print("damaged")
         if self.health <= 0:
             print("dead")  
-    
+            self.game.quit()
     def move(self, dx=0, dy=0):
         if not self.collide_with_walls(dx, dy):
             self.x += dx
@@ -133,7 +133,7 @@ class Hole(pg.sprite.Sprite):
           self.rect.x = x * TILESIZE
           self.rect.y = y * TILESIZE
 class Enemy(pg.sprite.Sprite):
-    def __init__(self, game, x, y, AI, n, d):
+    def __init__(self, game, x, y, AI, n, d,attack=1):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -149,6 +149,7 @@ class Enemy(pg.sprite.Sprite):
         self.moved = False
         self.diagonal = False
         self.distance = 0
+        self.attack=attack
     def setDistance(self):
         self.distance = round((abs(self.game.player.x - self.x) + abs(self.game.player.y - self.y))/2)
 
