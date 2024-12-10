@@ -42,6 +42,7 @@ class Game:
         self.walls = pg.sprite.Group()
         self.tiles = pg.sprite.Group()
         self.holes = pg.sprite.Group()
+        self.enemies = pg.sprite.Group()
         self.players = pg.sprite.Group()
         self.player = Player(self,-1,-1)
         self.enemyList = [];
@@ -70,6 +71,7 @@ class Game:
          YAdjust = (HEIGHT/TILESIZE/2)-(len(self.map_list[self.currentMap])/2)
          for row, tiles in enumerate(self.map_list[self.currentMap]):
              for col, tile in enumerate(tiles):
+                 
                  if tile == ".":
                      floorTile(self,col+XAdjust,row+YAdjust)
                  elif tile == 'P':
@@ -104,6 +106,14 @@ class Game:
     def resetMap(self):
         for tile in self.tiles:
             tile.kill()
+        for enemy in self.enemies:
+            self.enemyList.remove(enemy)
+            enemy.kill()
+            
+     
+            
+           
+            
     def update(self):
         # update portion of the game loop
         self.all_sprites.update()
@@ -124,37 +134,48 @@ class Game:
                     enemy.setDistance()
                 for enemy in self.enemyList:
                     enemy.setDiagonal()
+                for enemy in self.enemyList:
+                    enemy.moved = False
                 #PLAYER MOVEMENT
-                if event.key == pg.K_LEFT:
+                if event.key == pg.K_LEFT or event.key == pg.K_a:
+                    
+                    self.player.move(dx=-1)
+                    '''
                     enemyInTheWay = False
                     for enemy in self.enemyList:
                         if (enemy.x < self.player.x and enemy.distance == 0 and enemy.diagonal == False):
                             enemyInTheWay = True
-                    if enemyInTheWay == False:
-                        self.player.move(dx=-1)
-                if event.key == pg.K_RIGHT:
+                            '''
+                        
+                if event.key == pg.K_RIGHT or event.key == pg.K_d:
                     enemyInTheWay = False
+                    '''
                     for enemy in self.enemyList:
                         if (enemy.x > self.player.x and enemy.distance == 0 and enemy.diagonal == False):
                             enemyInTheWay = True
-                    if enemyInTheWay == False:
-                        self.player.move(dx=1)
+                            '''
                     
-                if event.key == pg.K_UP:
+                    self.player.move(dx=1)
+                    
+                if event.key == pg.K_UP or event.key == pg.K_w:
                     enemyInTheWay = False
+                    '''
                     for enemy in self.enemyList:
                         if (enemy.y < self.player.y and enemy.distance == 0 and enemy.diagonal == False):
                             enemyInTheWay = True
-                    if enemyInTheWay == False:
-                        self.player.move(dy=-1)
+                            '''
+                    
+                    self.player.move(dy=-1)
                   
-                if event.key == pg.K_DOWN:
+                if event.key == pg.K_DOWN or event.key == pg.K_s:
                     enemyInTheWay = False
+                    '''
                     for enemy in self.enemyList:
                         if (enemy.y > self.player.y and enemy.distance == 0 and enemy.diagonal == False):
                             enemyInTheWay = True
-                    if enemyInTheWay == False:
-                        self.player.move(dy=1)
+                            '''
+                    
+                    self.player.move(dy=1)
                     
 
        
@@ -163,19 +184,7 @@ class Game:
                         if(enemy.distance == 1 and enemy.diagonal == True) or (enemy.distance == 0 and enemy.diagonal == False):
                             enemy.damage(False)
                  
-                    '''
-                    if (distance == 1 and diagonal == True) or (distance == 0 and diagonal == False):
-                        self.enemy.damage(False)
-                    else:
-                        miss_count += 1
-                    if (distance2 == 1 and diagonal2 == True) or (distance2 == 0 and diagonal2 == False):
-                        self.enemy2.damage(False)
-                    else:
-                        miss_count += 1
-                    if miss_count == 2:
-                        system.out.print("no enemy nearby")
-                print(f"enemy 1 distance away: {distance}\nenemy 2 distance away: {distance2}")
-                '''
+                    
                 #Enemy attacks
                 #self.enemy.moved = False
                 #self.enemy2.moved = False
@@ -187,13 +196,10 @@ class Game:
                 for enemy in self.enemyList:
                     enemy.setDiagonal()
                 for enemy in self.enemyList:
-                    self.player.damage(enemy.attack(enemy.distance,enemy.diagonal))
-                '''
-                if self.enemy.dead == False: 
-                    self.player.damage(self.enemy.attack(distance, diagonal))
-                if self.enemy2.dead == False: 
-                    self.player.damage(self.enemy2.attack(distance2, diagonal2))
-                '''
+                    if enemy.dead == False:
+                        self.player.damage(enemy.attack(enemy.distance,enemy.diagonal))
+
+                
                 #Enemy move
                 for enemy in self.enemyList:
                     if enemy.dead == False:
@@ -201,18 +207,11 @@ class Game:
                             enemy.move_random(enemy.x, enemy.y, self.player.x, self.player.y)
                         if enemy.AI == 1:
                             enemy.move_target(enemy.x, enemy.y, self.player.x, self.player.y)
-                '''
-                if self.enemy.dead == False:
-                    if self.enemy.AI == 0:
-                        self.enemy.move_random(self.enemy.x, self.enemy.y, self.player.x, self.player.y)
-                    if self.enemy.AI == 1:
-                        self.enemy.move_target(self.enemy.x, self.enemy.y, self.player.x, self.player.y)
-                '''
 
                     
                 if event.key == pg.K_ESCAPE:
                     self.quit()
-
+                
                 #TURN ACTIONS
                     ###
                 

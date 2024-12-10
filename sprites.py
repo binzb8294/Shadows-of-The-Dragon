@@ -4,7 +4,7 @@ from settings import *
 from pygame.locals import *
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, game, x, y, level=1, exp=0, health=10, attack=1):
+    def __init__(self, game, x, y, level=1, exp=0, health=25, a=1):
         self.file = 'Assets/Knight.png'
         self.image = pg.image.load(self.file)
         self.groups = game.all_sprites
@@ -19,18 +19,20 @@ class Player(pg.sprite.Sprite):
         self.health=health
         self.x = x
         self.y = y
-        self.attack=attack
+        self.atk = a
+        
     def damage(self, h):
         if h != 0:
             self.health -= h
             print("damaged")
+            print(f"health = {self.health}")
         if self.health <= 0:
             print("dead")  
             self.game.quit()
-    def move(self, dx=0, dy=0):
-        if not self.collide_with_walls(dx, dy):
-            self.x += dx
             
+    def move(self, dx=0, dy=0):
+        if (not self.collide_with_walls(dx, dy)) and (not self.collide_with_enemy(dx, dy)):
+            self.x += dx
             self.y += dy
             self.enterHole(dx,dy)
             
@@ -41,20 +43,34 @@ class Player(pg.sprite.Sprite):
                     if self.game.currentMap != len(self.game.map_list)-1:
                         self.game.changeMap(Hole.Type)
                         self.game.createMap()
+                        #self.game.resetMap()
+                        for enemy in self.game.enemyList:
+                            print(enemy.name)
                 if Hole.Type == -1:
                     if self.game.currentMap != 0:
                         self.game.changeMap(Hole.Type)
                         self.game.createMap()
+                        #self.game.resetMap()
+                        for enemy in self.game.enemyList:
+                            print(enemy.name)
+                        
     def setPosition(self,sx=0,sy=0):        
         self.x=sx
         self.y=sy
         self.game.screen.blit(self.image,self.rect)
+        
     def collide_with_walls(self, dx=0, dy=0):
         for wall in self.game.walls:
             if wall.x == self.x + dx and wall.y == self.y + dy+1:
                 return True
+    def collide_with_enemy(self, dx=0, dy=0):
+        for enemy in self.game.enemyList:
+            if enemy.x == self.x + dx and enemy.y == self.y + dy+1:
+                return True
+        '''
         print("tilecords")
         print(self.x,self.y)
+        '''
         return False
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -127,21 +143,23 @@ class Hole(pg.sprite.Sprite):
           self.Type=Type
           self.x = x
           self.y = y
+          '''
           print('holecords')
           print(x)
           print(y)
+          '''
           self.rect.x = x * TILESIZE
           self.rect.y = y * TILESIZE
 class Enemy(pg.sprite.Sprite):
-    def __init__(self, game, x, y, AI, n, d,attack=1):
-        self.groups = game.all_sprites
+    def __init__(self, game, x, y, AI, n, d, a=1):
+        self.groups = game.all_sprites, game.enemies
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
         self.image.fill(RED)
         self.rect = self.image.get_rect()
         self.x = x
-        self.y = y
+        self.y = y 
         self.AI = AI
         self.name = n
         self.health = 5
@@ -149,7 +167,8 @@ class Enemy(pg.sprite.Sprite):
         self.moved = False
         self.diagonal = False
         self.distance = 0
-        self.attack=attack
+        self.atk = a
+        
     def setDistance(self):
         self.distance = round((abs(self.game.player.x - self.x) + abs(self.game.player.y - self.y))/2)
 
@@ -158,9 +177,10 @@ class Enemy(pg.sprite.Sprite):
             self.diagonal = False
         else:
             self.diagonal = True
+            
     def attack(self, distance, diagonal):
         if (distance == 1 and diagonal == True) or (distance == 0 and diagonal == False):
-            self.moved == True
+            self.moved = True
             return 1
         else:
             return 0
@@ -173,7 +193,7 @@ class Enemy(pg.sprite.Sprite):
         if self.health <= 0:
             print(f"{self.name} has been defeated")
             self.image.fill(WHITE)
-            self.dead == True
+            self.dead = True
 
     def move(self, dx=0, dy=0):
         if not self.collide_with_walls(dx,dy):
