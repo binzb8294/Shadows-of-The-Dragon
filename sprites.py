@@ -4,7 +4,7 @@ from settings import *
 from pygame.locals import *
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, game, x, y, level=1, exp=0, health=25, a=1):
+    def __init__(self, game, x, y, level=1, exp=0, health=100, a=1):
         self.file = 'Assets/Knight.png'
         self.image = pg.image.load(self.file)
         self.groups = game.all_sprites
@@ -24,8 +24,8 @@ class Player(pg.sprite.Sprite):
     def damage(self, h):
         if h != 0:
             self.health -= h
-            print("damaged")
-            print(f"health = {self.health}")
+            #print("damaged")
+            #print(f"health = {self.health}")
         if self.health <= 0:
             print("dead")  
             self.game.quit()
@@ -196,9 +196,15 @@ class Enemy(pg.sprite.Sprite):
             self.dead = True
 
     def move(self, dx=0, dy=0):
-        if not self.collide_with_walls(dx,dy):
+        if (not self.collide_with_walls(dx,dy)) and (not self.collide_with_enemy(dx,dy)):
             self.x += dx
             self.y += dy
+        for enemy in self.game.enemyList:
+            if not enemy.name == self.name:
+                if enemy.x == self.x and enemy.y == self.y:
+                    self.move(-1*dx, -1*dy)
+        if self.x == self.game.player.x and self.y == self.game.player.y:
+            self.move(-1*dx, -1*dx)
             
     #ex = enemy.x, ey = enemy.y, px = player.x, py = player.y
     def move_random(self, ex, ey, px, py):
@@ -269,6 +275,7 @@ class Enemy(pg.sprite.Sprite):
                 else:
                     print("error: enemy and player are on the same tile")
         self.moved = True
+        
     def update(self):
         self.rect.x = self.x * TILESIZE
         self.rect.y = self.y * TILESIZE
@@ -277,4 +284,11 @@ class Enemy(pg.sprite.Sprite):
         for wall in self.game.walls:
             if wall.x == self.x + dx and wall.y == self.y + dy:
                 return True
+        return False
+    
+    def collide_with_enemy(self, dx=0, dy=0):
+        for enemy in self.game.enemyList:
+            if not enemy.name == self.name:
+                if enemy.x == self.x + dx and enemy.y == self.y + dy+1:
+                    return True
         return False
