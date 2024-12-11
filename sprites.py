@@ -1,5 +1,6 @@
 import pygame as pg
 import random
+import math
 from settings import *
 from pygame.locals import *
 
@@ -12,7 +13,8 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        
+        print("player")
+        print(self.rect)
         self.game.screen.blit(self.image,self.rect)
         self.level=level
         self.exp=exp
@@ -20,6 +22,7 @@ class Player(pg.sprite.Sprite):
         self.x = x
         self.y = y
         self.atk = a
+        self.coordList = []
         
     def damage(self, h):
         if h != 0:
@@ -29,13 +32,26 @@ class Player(pg.sprite.Sprite):
         if self.health <= 0:
             print("dead")  
             self.game.quit()
-            
+    def updateCoordinates(self):
+        
+        Width = math.ceil(self.rect.width/16)
+        Height = math.ceil(self.rect.height/16)
+        for coord in self.coordList:
+            self.coordList.remove(coord)
+        for x in range(0,Width):
+            for y in range(0,Height):
+                self.coordList.append(coordinate(x+self.x,y+self.y))
+       
     def move(self, dx=0, dy=0):
         if (not self.collide_with_walls(dx, dy)) and (not self.collide_with_enemy(dx, dy)):
             self.x += dx
             self.y += dy
             self.enterHole(dx,dy)
-            
+            self.updateCoordinates()
+          
+    
+            for coord in self.coordList:
+                print(coord.x,coord.y)
     def enterHole(self, dx=0,dy=0):
         for Hole in self.game.holes:
             if Hole.x == self.x and Hole.y-1 == self.y:
@@ -58,28 +74,21 @@ class Player(pg.sprite.Sprite):
         self.x=sx
         self.y=sy
         self.game.screen.blit(self.image,self.rect)
-        
+
+    
     def collide_with_walls(self, dx=0, dy=0):
         for wall in self.game.walls:
             if wall.x == self.x + dx and wall.y == self.y + dy+1:
                 return True
+        return False
     def collide_with_enemy(self, dx=0, dy=0):
         for enemy in self.game.enemyList:
-            if enemy.x == self.x + dx and enemy.y == self.y + dy+1:
-                return True
-        '''
-        print("tilecords")
-        print(self.x,self.y)
-        '''
+            for coordS in self.coordList:
+                for coordE in enemy.coordList:
+                    if coordE.x == coordS.x +dx and coordE.y == coordS.y+dy:
+                        return True
         return False
-        self.groups = game.all_sprites
-        pg.sprite.Sprite.__init__(self, self.groups)
-        self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
         
-        self.rect = self.image.get_rect()
-        self.x = x
-        self.y = y
     def update(self):
         self.rect.x = self.x * TILESIZE
         self.rect.y = self.y * TILESIZE
@@ -156,8 +165,9 @@ class Enemy(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(RED)
+        self.image = pg.image.load('Assets/Ghoul.png')
         self.rect = self.image.get_rect()
+        print(self.rect)
         self.x = x
         self.y = y 
         self.AI = AI
@@ -168,7 +178,8 @@ class Enemy(pg.sprite.Sprite):
         self.diagonal = False
         self.distance = 0
         self.atk = a
-        
+        self.coordList = []
+        self.updateCoordinates()
     def setDistance(self):
         self.distance = round((abs(self.game.player.x - self.x) + abs(self.game.player.y - self.y))/2)
 
@@ -194,7 +205,23 @@ class Enemy(pg.sprite.Sprite):
             print(f"{self.name} has been defeated")
             self.image.fill(WHITE)
             self.dead = True
-
+            self.game.enemyList.remove(self)
+            self.kill()
+            
+            
+    def updateCoordinates(self):
+        for coord in self.coordList:
+            self.coordList.remove(coord)
+        Width = math.ceil(self.rect.width/16)
+        Height = math.ceil(self.rect.height/16)
+        for x in range(0,Width):
+            for y in range(0,Height):
+                self.coordList.append(coordinate(x+self.x,y+self.y))
+        '''
+        print("post update enemy")
+        for coord in self.coordList:
+            print(coord.x,coord.y)
+        '''
     def move(self, dx=0, dy=0):
         if (not self.collide_with_walls(dx,dy)) and (not self.collide_with_enemy(dx,dy)):
             self.x += dx
@@ -205,7 +232,7 @@ class Enemy(pg.sprite.Sprite):
                     self.move(-1*dx, -1*dy)
         if self.x == self.game.player.x and self.y == self.game.player.y:
             self.move(-1*dx, -1*dx)
-            
+        self.updateCoordinates()
     #ex = enemy.x, ey = enemy.y, px = player.x, py = player.y
     def move_random(self, ex, ey, px, py):
         if self.moved == False:
@@ -279,7 +306,7 @@ class Enemy(pg.sprite.Sprite):
     def update(self):
         self.rect.x = self.x * TILESIZE
         self.rect.y = self.y * TILESIZE
-        
+    
     def collide_with_walls(self, dx=0, dy=0):
         for wall in self.game.walls:
             if wall.x == self.x + dx and wall.y == self.y + dy:
@@ -287,8 +314,16 @@ class Enemy(pg.sprite.Sprite):
         return False
     
     def collide_with_enemy(self, dx=0, dy=0):
+        '''
         for enemy in self.game.enemyList:
-            if not enemy.name == self.name:
-                if enemy.x == self.x + dx and enemy.y == self.y + dy+1:
-                    return True
+            for coordS in self.coordList:
+                for coordE in enemy.coordList:
+                    if coordE.x == coordS.x +dx and coordE.y == coordS.y+dy:
+                        return True
+        '''
         return False
+class coordinate():
+    def __init__(self,x,y):
+        self.x=x
+        self.y=y
+        

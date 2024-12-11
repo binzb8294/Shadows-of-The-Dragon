@@ -93,6 +93,9 @@ class Game:
                  if tile == 'P':
                       self.player=Player(self,col+XAdjust,row+YAdjust-1,self.player.level,self.player.exp,self.player.health)
                       self.killClones(self.player)
+                      print("coords")
+                      for coord in self.player.coordList:
+                          print(coord.x,coord.y)
                  elif tile == 'E':
                      self.numEnemies+=1
                      self.enemyList.append(Enemy(self,col+XAdjust,row+YAdjust,random.randint(0,1),"Enemy "+str(self.numEnemies), False))
