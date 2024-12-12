@@ -13,8 +13,6 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        print("player")
-        print(self.rect)
         self.game.screen.blit(self.image,self.rect)
         self.level=level
         self.exp=exp
@@ -27,7 +25,7 @@ class Player(pg.sprite.Sprite):
     def damage(self, h):
         if h != 0:
             self.health -= h
-            #print("damaged")
+            print(f"You lost 1 HP. {self.health} HP remaining!")
             #print(f"health = {self.health}")
         if self.health <= 0:
             print("dead")  
@@ -50,8 +48,6 @@ class Player(pg.sprite.Sprite):
             self.updateCoordinates()
           
     
-            for coord in self.coordList:
-                print(coord.x,coord.y)
     def enterHole(self, dx=0,dy=0):
         for Hole in self.game.holes:
             if Hole.x == self.x and Hole.y-1 == self.y:
@@ -60,15 +56,15 @@ class Player(pg.sprite.Sprite):
                         self.game.changeMap(Hole.Type)
                         self.game.createMap()
                         #self.game.resetMap()
-                        for enemy in self.game.enemyList:
-                            print(enemy.name)
+                    if self.game.currentMap == len(self.game.map_list)-1:
+                        self.game.victory()
+                        print('victory')
                 if Hole.Type == -1:
                     if self.game.currentMap != 0:
                         self.game.changeMap(Hole.Type)
                         self.game.createMap()
                         #self.game.resetMap()
-                        for enemy in self.game.enemyList:
-                            print(enemy.name)
+                    
                         
     def setPosition(self,sx=0,sy=0):        
         self.x=sx
@@ -199,8 +195,10 @@ class Enemy(pg.sprite.Sprite):
     def damage(self, crit):
         if crit == True:
             self.health -= 3
+            print(f"{self.name} lost 3 points of hp. {self.health} points remaining!")
         else:
             self.health -= 1
+            print(f"{self.name} lost 1 point of hp. {self.health} points remaining!")
         if self.health <= 0:
             print(f"{self.name} has been defeated")
             self.image.fill(WHITE)
@@ -328,3 +326,20 @@ class coordinate():
         self.x=x
         self.y=y
         
+class VictoryScreen(pg.sprite.Sprite):
+    def __init__(self,game,x,y):
+        self.groups=game.all_sprites
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.file = 'Victory.png'
+        self.image = pg.image.load(self.file)
+     
+        self.game = game
+        
+        self.rect = self.image.get_rect()
+        self.rect.width = WIDTH
+        self.rect.height = HEIGHT
+        self.x = x
+        self.y = y
+        self.rect.x = 0
+        self.rect.y = 0
+        self.game.screen.blit(self.image,(0,0))

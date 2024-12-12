@@ -123,10 +123,14 @@ class Game:
      
     def draw(self):
         self.screen.fill(BGCOLOR)
-    
-        self.all_sprites.draw(self.screen)
-        
+        self.all_sprites.draw(self.screen)     
         pg.display.flip()
+    def victory(self):
+        self.resetMap()
+        self.victoryScreen = pg.image.load('Victory.png')
+      
+        VictoryScreen(self,0,0)
+        
     def events(self):
         # catch all events here
         for event in pg.event.get():
