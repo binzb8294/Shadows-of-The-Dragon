@@ -17,6 +17,7 @@ class Game:
 
     
     def load_data(self):
+        
         game_folder = path.dirname(__file__)
         self.currentMap=0
         self.map_list = []
@@ -47,7 +48,11 @@ class Game:
         self.player = Player(self,-1,-1)
         self.enemyList = [];
         self.numEnemies = 0
-        self.createMap()
+        self.background = pg.image.load('Title.png')
+        Background(self,0,0,self.background)
+        self.onTitle=True
+
+        #self.createMap()
         #self.enemy = Enemy(self, 15, 15, 1, "enemy 1", False)
         #self.enemy2 = Enemy(self, 18, 18, 0, "enemy 2", False)
         
@@ -127,9 +132,9 @@ class Game:
         pg.display.flip()
     def victory(self):
         self.resetMap()
-        self.victoryScreen = pg.image.load('Victory.png')
+        self.background = pg.image.load('Victory.png')
       
-        VictoryScreen(self,0,0)
+        Background(self,0,0,self.background)
         
     def events(self):
         # catch all events here
@@ -187,9 +192,13 @@ class Game:
 
        
                 if event.key == pg.K_SPACE:
-                    for enemy in self.enemyList:
-                        if(enemy.distance == 1 and enemy.diagonal == True) or (enemy.distance == 0 and enemy.diagonal == False):
-                            enemy.damage(False)
+                    if self.onTitle:
+                        self.createMap()
+                        self.onTitle=False
+                    else:
+                        for enemy in self.enemyList:
+                            if(enemy.distance == 1 and enemy.diagonal == True) or (enemy.distance == 0 and enemy.diagonal == False):
+                                enemy.damage(False)
                  
                     
                 #Enemy attacks

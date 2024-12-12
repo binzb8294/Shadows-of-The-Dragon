@@ -5,7 +5,7 @@ from settings import *
 from pygame.locals import *
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, game, x, y, level=1, exp=0, health=100, a=1):
+    def __init__(self, game, x, y, level=1, exp=0, health=30, a=1):
         self.file = 'Assets/Knight.png'
         self.image = pg.image.load(self.file)
         self.groups = game.all_sprites
@@ -56,7 +56,7 @@ class Player(pg.sprite.Sprite):
                         self.game.changeMap(Hole.Type)
                         self.game.createMap()
                         #self.game.resetMap()
-                    if self.game.currentMap == len(self.game.map_list)-1:
+                    else:
                         self.game.victory()
                         print('victory')
                 if Hole.Type == -1:
@@ -326,12 +326,12 @@ class coordinate():
         self.x=x
         self.y=y
         
-class VictoryScreen(pg.sprite.Sprite):
-    def __init__(self,game,x,y):
-        self.groups=game.all_sprites
+class Background(pg.sprite.Sprite):
+    def __init__(self,game,x,y,image):
+        self.groups=game.all_sprites,game.tiles
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.file = 'Victory.png'
-        self.image = pg.image.load(self.file)
+        
+        self.image = image
      
         self.game = game
         
