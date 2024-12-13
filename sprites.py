@@ -5,7 +5,7 @@ from settings import *
 from pygame.locals import *
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, game, x, y, level=1, exp=0, health=30, a=1):
+    def __init__(self, game, x, y, level=1, exp=0, health=40, a=1):
         self.file = 'Assets/Knight.png'
         self.image = pg.image.load(self.file)
         self.groups = game.all_sprites
@@ -29,7 +29,7 @@ class Player(pg.sprite.Sprite):
             #print(f"health = {self.health}")
         if self.health <= 0:
             print("dead")  
-            self.game.quit()
+            self.game.gameOver()
     def updateCoordinates(self):
         
         Width = math.ceil(self.rect.width/16)
@@ -59,12 +59,13 @@ class Player(pg.sprite.Sprite):
                     else:
                         self.game.victory()
                         print('victory')
+                '''
                 if Hole.Type == -1:
                     if self.game.currentMap != 0:
                         self.game.changeMap(Hole.Type)
                         self.game.createMap()
                         #self.game.resetMap()
-                    
+                 '''   
                         
     def setPosition(self,sx=0,sy=0):        
         self.x=sx

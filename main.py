@@ -45,7 +45,7 @@ class Game:
         self.holes = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.players = pg.sprite.Group()
-        self.player = Player(self,-1,-1)
+        self.player = Player(self,-10,-10)
         self.enemyList = [];
         self.numEnemies = 0
         self.background = pg.image.load('Title.png')
@@ -118,7 +118,18 @@ class Game:
             self.enemyList.remove(enemy)
             enemy.kill()
             
-     
+            
+    def resetGame(self):
+        self.player.kill()
+        self.resetMap()
+        self.currentMap=0
+
+    def gameOver(self):
+        self.resetGame
+        self.playing=False
+        self.background = pg.image.load('Game Over.png')
+        Background(self,0,0,self.background)
+          
             
            
             
@@ -240,9 +251,10 @@ class Game:
 # create the game object
 g = Game()
 g.show_start_screen()
+
+   
 while True:
     g.new()
-    g.run()
     g.show_go_screen()
 
 
