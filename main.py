@@ -48,7 +48,7 @@ class Game:
         self.player = Player(self,-10,-10)
         self.enemyList = [];
         self.numEnemies = 0
-        self.background = pg.image.load('Title.png')
+       
         Background(self,0,0,self.background)
         self.onTitle=True
 
@@ -251,7 +251,7 @@ class Game:
 # create the game object
 g = Game()
 g.show_start_screen()
-
+g.background = pg.image.load('Title.png')
    
 while True:
     g.new()
