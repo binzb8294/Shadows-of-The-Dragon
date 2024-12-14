@@ -89,7 +89,7 @@ class Player(pg.sprite.Sprite):
     def update(self):
         self.rect.x = self.x * TILESIZE
         self.rect.y = self.y * TILESIZE
-       
+        self.updateCoordinates()
 class floorTile(pg.sprite.Sprite):
     def __init__(self,game,x,y):
         self.file = 'Assets/Floor Tile.png'
@@ -305,7 +305,7 @@ class Enemy(pg.sprite.Sprite):
     def update(self):
         self.rect.x = self.x * TILESIZE
         self.rect.y = self.y * TILESIZE
-    
+        self.updateCoordinates()
     def collide_with_walls(self, dx=0, dy=0):
         for wall in self.game.walls:
             for coordS in self.coordList:
