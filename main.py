@@ -45,7 +45,7 @@ class Game:
         self.holes = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.players = pg.sprite.Group()
-        self.player = Player(self,-10,-10)
+        self.player = Player(self,WIDTH/2,HEIGHT/2)
         self.enemyList = [];
         self.numEnemies = 0
        
@@ -56,7 +56,7 @@ class Game:
         #self.enemy = Enemy(self, 15, 15, 1, "enemy 1", False)
         #self.enemy2 = Enemy(self, 18, 18, 0, "enemy 2", False)
         
-
+        #self.healthBar = HealthBar(self)
 
       # game loop - set self.playing = False to end the game
         self.playing = True
@@ -65,6 +65,7 @@ class Game:
             self.events()
             self.update()
             self.draw()
+           
     def changeMap(self,mapChange):
         self.currentMap += mapChange
         print('After change')
@@ -127,7 +128,7 @@ class Game:
     def gameOver(self):
         self.resetGame
         self.playing=False
-        self.background = pg.image.load('Game Over.png')
+        self.background = pg.image.load('Backgrounds/Game Over.png')
         Background(self,0,0,self.background)
           
             
@@ -136,14 +137,15 @@ class Game:
     def update(self):
         # update portion of the game loop
         self.all_sprites.update()
-     
+        #self.healthBar.draw()
+        pg.display.flip()
     def draw(self):
-        self.screen.fill(BGCOLOR)
+        
         self.all_sprites.draw(self.screen)     
         pg.display.flip()
     def victory(self):
         self.resetMap()
-        self.background = pg.image.load('Victory.png')
+        self.background = pg.image.load('Backgrounds/Victory.png')
       
         Background(self,0,0,self.background)
         
@@ -204,6 +206,7 @@ class Game:
        
                 if event.key == pg.K_SPACE:
                     if self.onTitle:
+                        self.screen.fill(BGCOLOR)
                         self.createMap()
                         self.onTitle=False
                     else:
@@ -251,7 +254,7 @@ class Game:
 # create the game object
 g = Game()
 g.show_start_screen()
-g.background = pg.image.load('Title.png')
+g.background = pg.image.load('Backgrounds/Title.png')
    
 while True:
     g.new()
