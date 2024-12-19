@@ -4,7 +4,7 @@ import math
 from settings import *
 from pygame.locals import *
 import time
-from PIL import Image
+
 #PIL must be installed
 class Player(pg.sprite.Sprite):
     def __init__(self, game, x, y, level=1, exp=0, health=40, a=1):
@@ -367,6 +367,7 @@ class Background(pg.sprite.Sprite):
         self.rect.x = 0
         self.rect.y = 0
         self.game.screen.blit(self.image,(0,0))
+        '''
 class HealthBar():
     def __init__(self, game):
         self.x = 0
@@ -385,7 +386,8 @@ class HealthBar():
         self.rect = self.RedPart.get_rect()
         self.rect.center = self.w//2, self.h//2
         self.game.screen.blit(self.RedPart,(0,0))
-        self.game.screen.blit(self.GreenPart,(0,0))                   
+        self.game.screen.blit(self.GreenPart,(0,0))
+        
     def draw(self):
   #calculate health ratio
         
@@ -401,3 +403,4 @@ class HealthBar():
         self.draw()
         pg.display.flip()
         pg.display.update()
+'''
